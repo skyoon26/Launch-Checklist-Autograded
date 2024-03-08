@@ -18,11 +18,31 @@ function addDestinationInfo(document, name, diameter, star, distance, moons, ima
  }
  
  function validateInput(testInput) {
-    
+   if (testInput.trim() === "") {
+     return "Empty";
+   } else if (isNaN(testInput) === true) {
+     return "Not a Number";
+   } else if (isNaN(testInput) === false) {
+     return "Is a Number";
+   }
  }
  
  function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
-    
+   let pilotValidation = validateInput(pilot);
+   let copilotValidation = validateInput(copilot);
+   let fuelLevelValidation = validateInput(fuelLevel);
+   let cargoLevelValidation = validateInput(cargoLevel);
+
+   if (pilotValidation === "Empty" || copilotValidation === "Empty" || fuelLevelValidation === "Empty" || cargoLevelValidation === "Empty") {
+     alert("All fields are required!");
+     return;
+   } else if (pilotValidation === "Is a Number" || copilotValidation === "Is a Number") {
+     alert("Make sure to enter valid information for each field!");
+     return;
+   } else if (fuelLevelValidation === "Not a Number" || cargoLevelValidation === "Not a Number") {
+     alert("Make sure to enter valid information for each field!");
+     return;
+   }
  }
  
  async function myFetch() {
@@ -35,6 +55,9 @@ function addDestinationInfo(document, name, diameter, star, distance, moons, ima
  }
  
  function pickPlanet(planets) {
+   let planet = {};
+   // Get random number and get planet with that index
+   return planet;
  }
  
  module.exports.addDestinationInfo = addDestinationInfo;
