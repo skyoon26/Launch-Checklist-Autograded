@@ -4,17 +4,18 @@ require('cross-fetch/polyfill');
 
 function addDestinationInfo(document, name, diameter, star, distance, moons, imageUrl) {
     // Here is the HTML formatting for our mission target div.
-    /*
+    const div = document.getElementById("missionTarget");
+    div.innerHTML = `
                  <h2>Mission Destination</h2>
                  <ol>
-                     <li>Name: </li>
-                     <li>Diameter: </li>
-                     <li>Star: ${star}</li>
-                     <li>Distance from Earth: </li>
-                     <li>Number of Moons: </li>
+                     <li>Name: ${json.name}</li>
+                     <li>Diameter: ${json.diameter}</li>
+                     <li>Star: ${json.star}</li>
+                     <li>Distance from Earth: ${json.distance}</li>
+                     <li>Number of Moons: ${json.moons}</li>
                  </ol>
-                 <img src="">
-    */
+                 <img src="${json.image}"> 
+      `;
  }
  
  function validateInput(testInput) {
@@ -28,12 +29,12 @@ function addDestinationInfo(document, name, diameter, star, distance, moons, ima
  }
  
  function formSubmission(document, list, pilot, copilot, fuelLevel, cargoMass) {
-   let pilotStatus = document.getElementById("pilotStatus");
-   let copilotStatus = document.getElementById("copilotStatus");
-   let fuelStatus = document.getElementById("fuelStatus");
-   let launchStatus = document.getElementById("launchStatus");
-   let cargoStatus = document.getElementById("cargoStatus");
-   let faultyItems = document.getElementById("faultyItems");
+   let pilotStatus = document.getElementById('pilotStatus');
+   let copilotStatus = document.getElementById('copilotStatus');
+   let fuelStatus = document.getElementById('fuelStatus');
+   let cargoStatus = document.getElementById('cargoStatus');
+   let launchStatus = document.getElementById('launchStatus');
+   let faultyItems = document.getElementById('faultyItems');
 
    if (validateInput(pilot) === "Empty" || validateInput(copilot) === "Empty" || validateInput(fuelLevel) === "Empty" || validateInput(cargoMass) === "Empty") {
      alert("All fields are required!");
@@ -42,41 +43,56 @@ function addDestinationInfo(document, name, diameter, star, distance, moons, ima
    } else if (validateInput(fuelLevel) === "Not a Number" || validateInput(cargoMass) === "Not a Number") {
      alert("Make sure to enter valid information for each field!");
    } else {
-     pilotStatus.innerHTMl = `Pilot ${pilot} is ready for launch`;
-     copilotStatus.innerHTMl = `Co-pilot ${copilot} is ready for launch`;
+     pilotStatus.innerHTML = `Pilot ${pilot} is ready for launch`;
+     copilotStatus.innerHTML = `Co-pilot ${copilot} is ready for launch`;
    }
 
    if (fuelLevel < 10000) {
-       faultyItems.style.visibility = "visible";
-       fuelStatus.innerHTMl = "Fuel level too low for launch";
-       launchStatus.innerHTMl = "Shuttle Not Ready for Launch";
-       launchStatus.style.color = "red";
-   } else if (cargoMass > 10000) {
-       faultyItems.style.visibility = "visible";
-       cargoStatus.innerHTMl = "Cargo mass too heavy for launch";
-       launchStatus.innerHTMl = "Shuttle Not Ready for Launch";
-       launchStatus.style.color = "red";
+     faultyItems.style.visibility = "visible";
+     fuelStatus.innerHTML = "Fuel level too low for launch";
+     launchStatus.innerHTML = "Shuttle Not Ready for Launch";
+     launchStatus.style.color = "red";
    } else {
-       fuelStatus.innerHTML = "Fuel level high enough for launch";
-       cargoStatus.innerHTML = "Cargo mass low enough for launch";
-       launchStatus.style.color = "green";
-       launchStatus.innerHTMl = "Shuttle Ready for Launch";
+     faultyItems.style.visibility = "visible";
+     fuelStatus.innerHTML = "Fuel level high enough for launch";
    }
+
+   if (cargoMass > 10000) {
+     faultyItems.style.visibility = "visible";
+     cargoStatus.innerHTML = "Cargo mass too heavy for launch";
+     launchStatus.innerHTML = "Shuttle Not Ready for Launch";
+     launchStatus.style.color = "red";
+   } else {
+     faultyItems.style.visibility = "visible";
+     cargoStatus.innerHTML = "Cargo mass low enough for launch";
+   }
+
+   if (fuelLevel >= 10000 && cargoMass <= 10000) {
+     launchStatus.innerHTML = "Shuttle is Ready for Launch";
+     launchStatus.style.color = "green";
+   }
+
  }
  
  async function myFetch() {
      let planetsReturned;
  
-     planetsReturned = await fetch().then( function(response) {
-         });
+     planetsReturned = await fetch("https://handlers.education.launchcode.org/static/planets.json").then( function(response) {
+       //planets as an array
+       response.json().then( function(json) {
+         return planetsReturned = json;
+       });  
+     });
  
      return planetsReturned;
  }
  
  function pickPlanet(planets) {
-  //  let planet = {};
-  //  // Get random number and get planet with that index
-  //  return planet;
+   // Get random number and get planet with that index
+   let planet = {};
+   let randomNum = Math.floor(Math.random() * 7);
+   planet = planets[randomNum];
+   return planet;
  }
  
  module.exports.addDestinationInfo = addDestinationInfo;
